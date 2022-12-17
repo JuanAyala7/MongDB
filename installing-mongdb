@@ -1,0 +1,26 @@
+--To install:
+
+Go to the section of MongoDB page:
+
+Products --> Community Edition --> Community Server
+
+Download it wihtout installing Compass
+
+
+
+--Then in the Hyper command linux of 'vim .bash_profile', press the 'i' key and insert the following:
+
+alias mongod="/c/Program\ files/MongoDB/Server/6.0/bin/mongod.exe"
+
+alias mongos="/c/Program\ Files/MongoDB/Server/6.0/bin/mongos.exe"
+
+--Stop inserting by pressing the 'esc' key and type :wq!
+
+
+Restart hyper, then put:
+
+mongos --version
+
+
+
+Then it should be all done!
