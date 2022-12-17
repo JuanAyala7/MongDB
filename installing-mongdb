@@ -2,9 +2,9 @@
 
 Go to the section of MongoDB page:
 
-Products --> Community Edition --> Community Server
+Products > Community Edition > Community Server
 
-Download it wihtout installing Compass
+Download it wihtout installing Compass and ensure that you are downloading the MSI package and not the ZIP 
 
 
 
@@ -14,7 +14,7 @@ alias mongod="/c/Program\ files/MongoDB/Server/6.0/bin/mongod.exe"
 
 alias mongos="/c/Program\ Files/MongoDB/Server/6.0/bin/mongos.exe"
 
---Stop inserting by pressing the 'esc' key and type :wq!
+--Stop inserting by pressing the 'esc' key and then type :wq!
 
 
 Restart hyper, then put:
