@@ -1,4 +1,5 @@
-Note: Due to MongoDB & Mongoose version on the course is deprecated, most of my lines of code may also be outdated/deprecated. The purpose of creating this, however, is to go through the course and become educated on the material/fundamentals of backend development.
+Note: Due to MongoDB & Mongoose version on the course is deprecated, most of my lines of code may also be outdated/deprecated. 
+The purpose of creating this, however, is to go through the course and become educated on the material/fundamentals of backend development.
 
 Saving our data to a MongoDB database so it can constantly update the inputs of our todolist.
 
@@ -6,13 +7,23 @@ This is the major difference between v1 & v2
 
 This is important because if the server was to restart along with any changes being made on the app.js file, it will always be safely saved within the database.
 
-Specified that the todolist is going to connect to the MongoDB along with the databse we want it to connect to (line 16 of app.js), now we need to create a new items schema.
+Specified that the todolist is going to connect to the MongoDB along with the databse we want it to connect to (line 12 of app.js)
+
+mongoose.connect("mongodb://localhost:27017/todolistDB", {useNewUrlParser: true});
+
+Next is to create a Schema
+
+const itemsSchema = {
+  name: String
+};
 
 The next thing we need to create is a new Mongoose model based on this schema. This will be initialized by creating a new constant with 'mongoose.model' and then specify the singular collection name (String) and the schema name.
 
+const Item = mongoose.model ("Item", itemsSchema)
+
 So now we have a schema and we have a model created using that schema.
 
-The next thing I want to do is  delete everything that's related to this day and getDate from v1.
+The next thing we want to do is delete everything that's related to this day and getDate from v1.
 
 Deleting the following:
 const day = date.getDate();
@@ -51,7 +62,7 @@ Now we can use the insertMany method from Mongoose so that we get to insert all 
 In our case:
 
 Item.insertMany(defaultItems, function(err){
-  is (err) {
+  if (err) {
     console.log(err);
   } else {
     console.log("Successfully saved default items to DB");
@@ -61,4 +72,101 @@ Item.insertMany(defaultItems, function(err){
 This will be verified via the Unix Command Line
 
 
+But how can we do what's verified via the Unix Command Line inside of our items app.js so that we can actually send it over to our list.ejs to render our todolist?
+
+This is where we use the Mongoose.find() method. 
+We specify the model name and then we specify some conditions and get a callback which includes an error and the results from the find if there were any. 
+We can then use the results documents insde the callback.
+
+  Item.find({}, function(err, foundItems){
+    console.log(foundItems);
+  });
+
+So while we're able to log all of our items by using that find function that Mongoose gave us as shown above, 
+our website is kind of broken because it doesn't know what this 'items' is that we're trying to pass over to our list .ejs.
+
+So let's go ahead and move our res.render into the mongoos.find callback instead of logging the found items. 
+Now we're going to pass over foundItems to our list instead.
+
+app.get("/", function(req, res) {
+
+  Item.find({}, function(err, foundItems){
+    res.render("list", {listTitle: "Today", newListItems: foundItems});
+  });
+
+});
+
+This should fix 1 issue but we still have other issues. 
+
+The first problem is that our items are being rendered in their entirety within each list items when we only want the part that comes in the name field.
+
+Problem Example: {_id: 5bc9ba3e48cd8015b64087d7,
+		name: 'Welcome to your todolist!',
+		__v:0}
+
+What we want: Welcome to yout todolist!
+
+The second problem is that every single time that we rerun our app.js with nodemon we insert more items into our database 
+because it's rerunning this item.insertMany line of code.
+
+To address problem 1, we go to the views folder to then go to list.ejs, line 11 (newListItems[i])
+
+This specific line happens to be a document inside our items collection. 
+So instead of adding the entirety of the documents collection, we can simply tap into its name field.
+
+newListItems[i].name
+
+Now we must implement the FOR EACH method that we get access to in Javascript 
+because we're currently using a traditional FOR LOOP that is causing a bit of a clutter which makes it difficult to see what's going on.
+
+BEFORE: 
+  <% for (let i=0; i<newListItems.length; i++) { %>
+      <div class="item">
+        <input type="checkbox">
+        <p><%=  newListItems[i].name  %></p>
+      </div>
+      <% } %>
+
+AFTER: 
+<% newListItems.forEach(function(item){ %>
+  <div class="item">
+    <input type="checkbox">
+    <p><%=  item.name  %></p>
+  </div>
+<% }) %>
+
+The Second issue is the repeated inserts
+
+app.get("/", function(req, res) {
+
+
+  Item.find({}, function(err, foundItems){
+
+    if (foundItems.length === 0) {
+      Item.insertMany(defaultItems, function(err){
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("Successfully saved default items to DB");
+        }
+      });
+      res.redirect("/");
+    } else {
+      res.render("list", {listTitle: "Today", newListItems: foundItems});
+    }
+  });
+});
+
+So what this will do is it'll check firstly to see if there are any items in our items collection and
+if there are none, then it's going to create three items and add it into items collection.
+
+And then finally it's going to redirect back into this root route but now this time it's not going to fall into the IF block.
+
+Instead it's going to go into the ELSE block because now we actually do have items in our items collection 
+and were able to res.render those new items over to our list.ejs.
+
+And now if we refresh our website we have all of our default items showing up but no matter how many times I restart my server 
+You'll still only get three items and it doesn't stop building up.
+
 Gem: Coding is essentially an open book exam. You can refer to as many sources as you like in order to get to the answer
+
