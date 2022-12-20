@@ -249,4 +249,15 @@ app.post("/delete", function(req, res){
 });
 
 
+
+Currently as it is our list works in terms of all of the basic functionality. 
+
+We're able to add new items,we're able to delete items and we're able to look at all of the items in our list.
+
+But there's one feature or one functionality that we should add which is to have multiple lists
+
+Express allows us to use route parameters to create dynamic routes. 
+
+
+
 Gem: Coding is essentially an open book exam. You can refer to as many sources as you like in order to get to the answer
