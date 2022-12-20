@@ -168,5 +168,42 @@ and were able to res.render those new items over to our list.ejs.
 And now if we refresh our website we have all of our default items showing up but no matter how many times I restart my server 
 You'll still only get three items and it doesn't stop building up.
 
-Gem: Coding is essentially an open book exam. You can refer to as many sources as you like in order to get to the answer
 
+Now let's look at how we are able to add new items into our ToDo list by switching
+our database from an array over to MongoDB.
+
+BEFORE:
+
+app.post("/", function(req, res){
+
+  const item = req.body.newItem;
+
+  if (req.body.list === "Work") {
+    workItems.push(item);
+    res.redirect("/work");
+  } else {
+    items.push(item);
+    res.redirect("/");
+  }
+});
+
+AFTER:
+
+  const itemName = req.body.newItem;
+
+  const item = new Item ({
+    name: itemName
+  });
+
+  item.save();
+
+  res.redirect("/");
+
+});
+
+So now after we save our item, then we re-enter over here (line 41) and we find all the items inside our items collection and render it on the screen.
+
+hit +, redirects to the home route and we see it update immediately.
+
+
+Gem: Coding is essentially an open book exam. You can refer to as many sources as you like in order to get to the answer
