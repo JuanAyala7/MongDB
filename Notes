@@ -1,5 +1,4 @@
-Note: Due to MongoDB & Mongoose version on the course is deprecated, most of my lines of code may also be outdated/deprecated. 
-The purpose of creating this, however, is to go through the course and become educated on the material/fundamentals of backend development.
+Note: Due to MongoDB & Mongoose version on the course is deprecated, most of my lines of code may also be outdated/deprecated. The purpose of creating this, however, is to go through the course and become educated on the material/fundamentals of backend development.
 
 Saving our data to a MongoDB database so it can constantly update the inputs of our todolist.
 
@@ -71,22 +70,17 @@ Item.insertMany(defaultItems, function(err){
 
 This will be verified via the Unix Command Line
 
-
 But how can we do what's verified via the Unix Command Line inside of our items app.js so that we can actually send it over to our list.ejs to render our todolist?
 
-This is where we use the Mongoose.find() method. 
-We specify the model name and then we specify some conditions and get a callback which includes an error and the results from the find if there were any. 
-We can then use the results documents insde the callback.
+This is where we use the Mongoose.find() method. We specify the model name and then we specify some conditions and get a callback which includes an error and the results from the find if there were any. We can then use the results documents insde the callback.
 
   Item.find({}, function(err, foundItems){
     console.log(foundItems);
   });
 
-So while we're able to log all of our items by using that find function that Mongoose gave us as shown above, 
-our website is kind of broken because it doesn't know what this 'items' is that we're trying to pass over to our list .ejs.
+So while we're able to log all of our items by using that find function that Mongoose gave us as shown above, our website is kind of broken because it doesn't know what this 'items' is that we're trying to pass over to our list .ejs.
 
-So let's go ahead and move our res.render into the mongoos.find callback instead of logging the found items. 
-Now we're going to pass over foundItems to our list instead.
+So let's go ahead and move our res.render into the mongoos.find callback instead of logging the found items. Now we're going to pass over foundItems to our list instead.
 
 app.get("/", function(req, res) {
 
@@ -106,18 +100,15 @@ Problem Example: {_id: 5bc9ba3e48cd8015b64087d7,
 
 What we want: Welcome to yout todolist!
 
-The second problem is that every single time that we rerun our app.js with nodemon we insert more items into our database 
-because it's rerunning this item.insertMany line of code.
+The second problem is that every single time that we rerun our app.js with nodemon we insert more items into our database because it's rerunning this item.insertMany line of code.
 
 To address problem 1, we go to the views folder to then go to list.ejs, line 11 (newListItems[i])
 
-This specific line happens to be a document inside our items collection. 
-So instead of adding the entirety of the documents collection, we can simply tap into its name field.
+This specific line happens to be a document inside our items collection. So instead of adding the entirety of the documents collection, we can simply tap into its name field.
 
 newListItems[i].name
 
-Now we must implement the FOR EACH method that we get access to in Javascript 
-because we're currently using a traditional FOR LOOP that is causing a bit of a clutter which makes it difficult to see what's going on.
+Now we must implement the FOR EACH method that we get access to in Javascript because we're currently using a traditional FOR LOOP that is causing a bit of a clutter which makes it difficult to see what's going on.
 
 BEFORE: 
   <% for (let i=0; i<newListItems.length; i++) { %>
@@ -162,11 +153,10 @@ if there are none, then it's going to create three items and add it into items c
 
 And then finally it's going to redirect back into this root route but now this time it's not going to fall into the IF block.
 
-Instead it's going to go into the ELSE block because now we actually do have items in our items collection 
-and were able to res.render those new items over to our list.ejs.
+Instead it's going to go into the ELSE block because now we actually do have items in our items collection and were able to res.render those new items over to our list.ejs.
 
-And now if we refresh our website we have all of our default items showing up but no matter how many times I restart my server 
-You'll still only get three items and it doesn't stop building up.
+And now if we refresh our website we have all of our default items showing up but no matter how many times I restart my server You'll still only get three items and it doesn't stop building up.
+
 
 
 Now let's look at how we are able to add new items into our ToDo list by switching
@@ -204,6 +194,59 @@ AFTER:
 So now after we save our item, then we re-enter over here (line 41) and we find all the items inside our items collection and render it on the screen.
 
 hit +, redirects to the home route and we see it update immediately.
+
+
+ Deleting Items from our ToDoList Databas
+
+We also want to be able to delete the item when you click the check box next to it. And to do that we have to remove that particular document from items collection. Inside our list.ejs
+
+app.post("/delete", function(req, res){
+  console.log(req.body);
+});
+
+
+What we want is whenever we tick a checkbox we just want it to be able to delete that item.
+The action has to happen when we check the checkbox.
+
+<% newListItems.forEach(function(item){ %>
+  <form action="/delete" methoid="post">
+  <div class="item">
+    <input type="checkbox" name="checkbox" value="<%=item._id%>onChange="this.form.submit()">
+    <p><%=  item.name  %></p>
+  </div>
+
+When we pass new list items over we're passing over an array of Mongo documents.
+
+Each of these documents or each of these items that we're looping through has a name as well as an ID.
+
+So if you bind that ID to the value of each of the checkboxes, then when it gets checked you can submit this form and find out which item was actually checked off.
+
+Now let's check off one of the items and now you can see I've got the ID of that item.
+
+Once you've got the ID then everything else is so much easier because we can now delete the item with that particular ID.
+
+app.post("/delete", function(req, res){
+  const checkedItemId = req.body.checkbox;
+
+  Item.findByIdAndRemove(checkedItemId, function(err){
+    if (!err) {
+      console.log("Successfully deleted checked item.");
+    } 
+  });
+});
+
+But in order for it to reflect in our web page then again we have to call a redirect. 
+
+app.post("/delete", function(req, res){
+  const checkedItemId = req.body.checkbox;
+
+  Item.findByIdAndRemove(checkedItemId, function(err){
+    if (!err) {
+      console.log("Successfully deleted checked item.");
+      res.redirect("/");
+    }
+  });
+});
 
 
 Gem: Coding is essentially an open book exam. You can refer to as many sources as you like in order to get to the answer
