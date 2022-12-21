@@ -260,4 +260,38 @@ Express allows us to use route parameters to create dynamic routes.
 
 
 
+But if we tried to add a new item in here then it actually doesn't work.
+
+It takes us back to the default list called Today and then adds an item there.
+So, We have to figure out how we can handle this inside that root route for the post request.
+
+pass over the current list that's being displayed which we have access to for the listTitle variable up here, 
+and we need to pass it back when this form gets triggered.
+
+Adding thew following to list.ejs: 
+<button type="submit" name="list" value="<%= listTitle %>">+</button>
+
+Now whenever we submit our form we should get acces to two things: one is the newItem and the second is the list.
+
+Added the following to app.ejs:
+  const listName = req.body.list;
+
+  const item = new Item ({
+    name: itemName
+  });
+
+  if (listName === "Today"){
+    item.save();
+    res.redirect("/");
+  } else {
+    List.findOne({name: listName}, function(err, foundList){
+      foundList.items.push(item);
+      foundList.save();
+      res.redirect("/" + listName);
+    });
+  }
+
+Now when you go to any dynamic route, you are able to add new Items to your dynamic/custom todolists, 
+and it will remain captured within that respective list and you can categorize your items based off the list they were added to
+
 Gem: Coding is essentially an open book exam. You can refer to as many sources as you like in order to get to the answer
