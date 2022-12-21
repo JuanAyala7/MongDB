@@ -1,4 +1,6 @@
-Note: Due to MongoDB & Mongoose version on the course is deprecated, most of my lines of code may also be outdated/deprecated. The purpose of creating this, however, is to go through the course and become educated on the material/fundamentals of backend development.
+Note: Due to MongoDB & Mongoose version on the course is deprecated, 
+      most of my lines of code may also be outdated/deprecated. 
+      The purpose of creating this, however, is to go through the course and become educated on the material/fundamentals of backend development.
 
 Saving our data to a MongoDB database so it can constantly update the inputs of our todolist.
 
@@ -16,7 +18,8 @@ const itemsSchema = {
   name: String
 };
 
-The next thing we need to create is a new Mongoose model based on this schema. This will be initialized by creating a new constant with 'mongoose.model' and then specify the singular collection name (String) and the schema name.
+The next thing we need to create is a new Mongoose model based on this schema. 
+This will be initialized by creating a new constant with 'mongoose.model' and then specify the singular collection name (String) and the schema name.
 
 const Item = mongoose.model ("Item", itemsSchema)
 
@@ -29,7 +32,8 @@ const day = date.getDate();
 const date = require (__dirname + "/date.js");
 the date.js file
 
-This is to simplify our code instead of having to use our date module and instead of having this 'date' file, we're going to render the default list with a title that's called "Today".
+This is to simplify our code instead of having to use our date module and instead of having this 'date' file, 
+we're going to render the default list with a title that's called "Today".
 
 Before: res.render("list", {listTitle: day, newListItems: items});
 After: res.render("list", {listTitle: "Today", newListItems: items});
@@ -72,15 +76,19 @@ This will be verified via the Unix Command Line
 
 But how can we do what's verified via the Unix Command Line inside of our items app.js so that we can actually send it over to our list.ejs to render our todolist?
 
-This is where we use the Mongoose.find() method. We specify the model name and then we specify some conditions and get a callback which includes an error and the results from the find if there were any. We can then use the results documents insde the callback.
+This is where we use the Mongoose.find() method. 
+We specify the model name and then we specify some conditions and get a callback which includes an error and the results from the find if there were any. 
+We can then use the results documents insde the callback.
 
   Item.find({}, function(err, foundItems){
     console.log(foundItems);
   });
 
-So while we're able to log all of our items by using that find function that Mongoose gave us as shown above, our website is kind of broken because it doesn't know what this 'items' is that we're trying to pass over to our list .ejs.
+So while we're able to log all of our items by using that find function that Mongoose gave us as shown above, 
+our website is kind of broken because it doesn't know what this 'items' is that we're trying to pass over to our list .ejs.
 
-So let's go ahead and move our res.render into the mongoos.find callback instead of logging the found items. Now we're going to pass over foundItems to our list instead.
+So let's go ahead and move our res.render into the mongoos.find callback instead of logging the found items. 
+Now we're going to pass over foundItems to our list instead.
 
 app.get("/", function(req, res) {
 
@@ -100,15 +108,18 @@ Problem Example: {_id: 5bc9ba3e48cd8015b64087d7,
 
 What we want: Welcome to yout todolist!
 
-The second problem is that every single time that we rerun our app.js with nodemon we insert more items into our database because it's rerunning this item.insertMany line of code.
+The second problem is that every single time that we rerun our app.js with nodemon we insert more items into our database 
+because it's rerunning this item.insertMany line of code.
 
 To address problem 1, we go to the views folder to then go to list.ejs, line 11 (newListItems[i])
 
-This specific line happens to be a document inside our items collection. So instead of adding the entirety of the documents collection, we can simply tap into its name field.
+This specific line happens to be a document inside our items collection. So instead of adding the entirety of the documents collection, 
+we can simply tap into its name field.
 
 newListItems[i].name
 
-Now we must implement the FOR EACH method that we get access to in Javascript because we're currently using a traditional FOR LOOP that is causing a bit of a clutter which makes it difficult to see what's going on.
+Now we must implement the FOR EACH method that we get access to in Javascript because we're currently using a traditional FOR LOOP 
+that is causing a bit of a clutter which makes it difficult to see what's going on.
 
 BEFORE: 
   <% for (let i=0; i<newListItems.length; i++) { %>
@@ -153,9 +164,11 @@ if there are none, then it's going to create three items and add it into items c
 
 And then finally it's going to redirect back into this root route but now this time it's not going to fall into the IF block.
 
-Instead it's going to go into the ELSE block because now we actually do have items in our items collection and were able to res.render those new items over to our list.ejs.
+Instead it's going to go into the ELSE block because now we actually do have items in our items collection 
+and were able to res.render those new items over to our list.ejs.
 
-And now if we refresh our website we have all of our default items showing up but no matter how many times I restart my server You'll still only get three items and it doesn't stop building up.
+And now if we refresh our website we have all of our default items showing up but no matter how many times I restart my server 
+You'll still only get three items and it doesn't stop building up.
 
 
 
@@ -196,9 +209,10 @@ So now after we save our item, then we re-enter over here (line 41) and we find 
 hit +, redirects to the home route and we see it update immediately.
 
 
- Deleting Items from our ToDoList Databas
+ Deleting Items from our ToDoList Database
 
-We also want to be able to delete the item when you click the check box next to it. And to do that we have to remove that particular document from items collection. Inside our list.ejs
+We also want to be able to delete the item when you click the check box next to it. And to do that we have to remove that particular document from items collection. 
+Inside our list.ejs
 
 app.post("/delete", function(req, res){
   console.log(req.body);
@@ -249,6 +263,7 @@ app.post("/delete", function(req, res){
 });
 
 
+Creating Custom Lists using Express Route Parameters
 
 Currently as it is our list works in terms of all of the basic functionality. 
 
@@ -259,13 +274,13 @@ But there's one feature or one functionality that we should add which is to have
 Express allows us to use route parameters to create dynamic routes. 
 
 
-
 But if we tried to add a new item in here then it actually doesn't work.
 
 It takes us back to the default list called Today and then adds an item there.
+
 So, We have to figure out how we can handle this inside that root route for the post request.
 
-pass over the current list that's being displayed which we have access to for the listTitle variable up here, 
+We need to pass over the current list that's being displayed which we have access to for the listTitle variable up here, 
 and we need to pass it back when this form gets triggered.
 
 Adding thew following to list.ejs: 
@@ -292,6 +307,91 @@ Added the following to app.ejs:
   }
 
 Now when you go to any dynamic route, you are able to add new Items to your dynamic/custom todolists, 
-and it will remain captured within that respective list and you can categorize your items based off the list they were added to
+and it will remain captured within that respective list and you can categorize your items based off the list they were added to.
+
+
+The last thing that we need to do is we need to be able to delete these items in our custom lists
+because at the moment when I check this off then it somehow redirects me back to my home page 
+instead of actually deleting the item that I wanted from that custom list.
+
+Well, if you take a look inside our list.ejs at the moment the way that we're implementing the delete functionality is through the use of this form. 
+And this form makes a post request to the /delete route and it passes over the item id that the user wanted to delete and the form gets triggered when one of the checkboxes gets clicked.
+
+So here's a problem. 
+In that route we only look for all of the items but we don't currently check which list the item is from in order to delete it from the correct list.
+
+Added to list.ejs:
+<input type="hidden" name="listName" value="<%= listTitle %>"></input>
+
+Added to app.js:
+const listName = req.body.listName;
+
+
+
+So the next thing we need to do is we're going to again use an IF statement to check to see if we are making a 
+post request to delete an item from the default list where the listName is today or if we're trying to delete an item from a custom list.
+
+Now we're in a position we need to be able to find the list document that has the current listName and then we need to update that list to remove the checked item with that particular ID.
+
+This is where the Mongoose findOneAndUpdate method comes in.
+
+<ModelName>.findOneAndUpdate( {conditions}, {$pull: {field: {query}}}, function(err, results){});
+
+List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemId}}}, callback)
+
+We have to specifiy 3 things whel linking this method to the 'List':
+1. Which List do you want to update?
+2. What updates do you want to make?
+3. A callback
+
+1. The list that we want to find has to have a name that corresponds to this listName constant that we
+got from our list.ejs.This is going to be the name of our custom list. 
+
+Now that we found that document that corresponds to the customer list, how are we going to update it?
+
+2. First thing we need is the $pull operator to then specify something we want to pull from 
+and here ($pull: {}}) we have to provide the name of the array inside this list that we found and that name is going to be 'items' ($pull: {items}}) 
+since it's the only array inside our list document.
+
+But how do we know which item out of all of the items we want to pull? 
+Here we have another further set of curly braces where we provide the query for matching the item ($pull: {items {}}}). 
+
+The query we're going to make is we're going to pull the item which has an ID that corresponds to the checkedItemId ($pull: {items {_id: checkedItemId}}}).
+
+List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemId}}}, callback)
+
+ And now this is the entirety of our update statement where we pull from our items array an item that has an ID that corresponds to our checkedItemId. 
+
+3. And now we're ready to write our callback
+
+So again it's going to be a callback that gives you an error 
+and a found list because in this case when we're calling findOneAndUpdate the find one corresponds to finding a list.
+
+Now that we've found the list and we've updated it then if there are no errors we can simply res.redirect. 
+And we're going to redirect again to that custom list path so it's going to be "/" + listName.
+
+      if (!err) {
+        console.log("Successfully deleted checked item.");
+        res.redirect("/");
+      }
+    });
+  } else {
+    List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemId}}}, function(err, foundList))
+     if (!err) {
+       res.redirect("/" + listName);
+     }
+   });
+  }
+
+
+
+The last thing we need to work on are the custom parameters being case sensitive. 
+so if you want to go to your Home page but type home, it would be two different lists. 
+
+To fix this we'll simply use LoDash's _. capitalize string where it converts the first character of string to upper case and the remaining to lower case.
+
+const customListName = _.capitalize(req.params.customListName);
+
+
 
 Gem: Coding is essentially an open book exam. You can refer to as many sources as you like in order to get to the answer
