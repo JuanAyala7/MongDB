@@ -1,6 +1,3 @@
-Note: Due to MongoDB & Mongoose version on the course is deprecated, 
-      most of my lines of code may also be outdated/deprecated. 
-      The purpose of creating this, however, is to go through the course and become educated on the material/fundamentals of backend development.
 
 Saving our data to a MongoDB database so it can constantly update the inputs of our todolist.
 
