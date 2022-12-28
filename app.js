@@ -16,7 +16,7 @@ app.use(express.static("public"));
 //mongoose.connect("mongodb://localhost:27017/todolistDB");
 
 mongoose.set('strictQuery', false);
-mongoose.connect("mongodb://127.0.0.1/todolistDB", {useNewUrlParser: true}); // ==> use this if deprect a warning
+mongoose.connect("mongodb+srv://admin-ayala:test-123@cluster0.ajxfrut.mongodb.net/todolistDB", {useNewUrlParser: true}); // ==> use this if deprect a warning
 
 const itemsSchema = {
   name: String
