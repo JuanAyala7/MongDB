@@ -1,14 +1,16 @@
 //jshint esversion:6
 
 const express = require("express");
+const app = express();
+const PORT = process.env.PORT || 3000;
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const _ = require("lodash");
+require('dotenv').config();
 
-const app = express();
+
 
 app.set('view engine', 'ejs');
-
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
@@ -16,7 +18,12 @@ app.use(express.static("public"));
 //mongoose.connect("mongodb://localhost:27017/todolistDB");
 
 mongoose.set('strictQuery', false);
-mongoose.connect("mongodb+srv://admin-ayala:test-123@cluster0.ajxfrut.mongodb.net/todolistDB", {useNewUrlParser: true}); // ==> use this if deprect a warning
+
+//#----MongoDB ATLAS Connection----//
+mongoose.connect(process.env.ATLAS_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 
 const itemsSchema = {
   name: String
